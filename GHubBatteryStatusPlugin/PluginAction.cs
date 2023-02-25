@@ -38,16 +38,81 @@ namespace GHubBatteryStatusPlugin
             if (payload.Settings == null || payload.Settings.Count == 0)
             {
                 _settings = PluginSettings.CreateDefaultSettings();
-                SaveSettings();
             }
             else
             {
                 _settings = payload.Settings.ToObject<PluginSettings>();
             }
+
+            Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
+            Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
+            Connection.OnTitleParametersDidChange += Connection_OnTitleParametersDidChange;
+            Connection.OnSendToPlugin += Connection_OnSendToPlugin;
+            Connection.OnPropertyInspectorDidAppear += Connection_OnPropertyInspectorDidAppear;
+            Connection.OnPropertyInspectorDidDisappear += Connection_OnPropertyInspectorDidDisappear;
+            Connection.OnDeviceDidConnect += Connection_OnDeviceDidConnect;
+            Connection.OnDeviceDidDisconnect += Connection_OnDeviceDidDisconnect;
+        }
+
+        private static void Connection_OnApplicationDidLaunch(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidLaunch> e)
+        {
+
+        }
+
+        private static void Connection_OnApplicationDidTerminate(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidTerminate> e)
+        {
+
+        }
+
+        private static void Connection_OnTitleParametersDidChange(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.TitleParametersDidChange> e)
+        {
+
+        }
+
+        private static void Connection_OnSendToPlugin(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
+        {
+
+        }
+
+        private static void Connection_OnPropertyInspectorDidAppear(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidAppear> e)
+        {
+
+        }
+
+        private static void Connection_OnPropertyInspectorDidDisappear(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)
+        {
+
+        }
+
+        private static void Connection_OnDeviceDidConnect(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidConnect> e)
+        {
+
+        }
+
+        private static void Connection_OnDeviceDidDisconnect(object sender,
+            BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidDisconnect> e)
+        {
+
         }
 
         public override void Dispose()
         {
+            Connection.OnApplicationDidLaunch -= Connection_OnApplicationDidLaunch;
+            Connection.OnApplicationDidTerminate -= Connection_OnApplicationDidTerminate;
+            Connection.OnTitleParametersDidChange -= Connection_OnTitleParametersDidChange;
+            Connection.OnSendToPlugin -= Connection_OnSendToPlugin;
+            Connection.OnPropertyInspectorDidAppear -= Connection_OnPropertyInspectorDidAppear;
+            Connection.OnPropertyInspectorDidDisappear -= Connection_OnPropertyInspectorDidDisappear;
+            Connection.OnDeviceDidConnect -= Connection_OnDeviceDidConnect;
+            Connection.OnDeviceDidDisconnect -= Connection_OnDeviceDidDisconnect;
+
             Logger.Instance.LogMessage(TracingLevel.INFO, "Destructor called");
         }
 
