@@ -7,7 +7,7 @@
     <ProjectGuid>{4635D874-69C0-4010-BE46-77EF92EB1553}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <RootNamespace>GHubBatteryStatusPlugin</RootNamespace>
-    <AssemblyName>GHubBatteryStatusPlugin</AssemblyName>
+    <AssemblyName>com.gerenuk.ghub-battery-status</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -42,7 +42,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\GHubBatteryStatusPlugin.sdPlugin\</OutputPath>
+    <OutputPath>bin\Release\com.gerenuk.ghub-battery-status.sdPlugin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>

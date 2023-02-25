@@ -7,7 +7,7 @@ using GHubBatteryStatusPlugin.Internal;
 
 namespace GHubBatteryStatusPlugin
 {
-    [PluginActionId("GHubBatteryStatusPlugin.pluginaction")]
+    [PluginActionId("com.gerenuk.ghub-battery-status")]
     public class PluginAction : KeypadBase
     {
         private class PluginSettings
