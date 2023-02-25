@@ -1,7 +1,9 @@
-﻿using BarRaider.SdTools;
+﻿using System.Collections.Generic;
+using BarRaider.SdTools;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
+using GHubBatteryStatusPlugin.Internal;
 
 namespace GHubBatteryStatusPlugin
 {
@@ -14,11 +16,19 @@ namespace GHubBatteryStatusPlugin
             {
                 var instance = new PluginSettings
                 {
+                    Devices = null,
+                    Device = null,
                     OutputFileName = string.Empty,
                     InputString = string.Empty
                 };
                 return instance;
             }
+
+            [JsonProperty(PropertyName = "devices")]
+            public List<DeviceInfo> Devices { get; set; }
+
+            [JsonProperty(PropertyName = "device")]
+            public string Device { get; set; }
 
             [FilenameProperty]
             [JsonProperty(PropertyName = "outputFileName")]
@@ -33,6 +43,7 @@ namespace GHubBatteryStatusPlugin
         private readonly PluginSettings _settings;
 
         #endregion
+
         public PluginAction(ISDConnection connection, InitialPayload payload) : base(connection, payload)
         {
             if (payload.Settings == null || payload.Settings.Count == 0)
@@ -44,6 +55,7 @@ namespace GHubBatteryStatusPlugin
                 _settings = payload.Settings.ToObject<PluginSettings>();
             }
 
+            #region Event Init
             Connection.OnApplicationDidLaunch += Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate += Connection_OnApplicationDidTerminate;
             Connection.OnTitleParametersDidChange += Connection_OnTitleParametersDidChange;
@@ -52,58 +64,63 @@ namespace GHubBatteryStatusPlugin
             Connection.OnPropertyInspectorDidDisappear += Connection_OnPropertyInspectorDidDisappear;
             Connection.OnDeviceDidConnect += Connection_OnDeviceDidConnect;
             Connection.OnDeviceDidDisconnect += Connection_OnDeviceDidDisconnect;
+            #endregion
         }
 
-        private static void Connection_OnApplicationDidLaunch(object sender,
+        #region Events
+        private void Connection_OnApplicationDidLaunch(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidLaunch> e)
         {
 
         }
 
-        private static void Connection_OnApplicationDidTerminate(object sender,
+        private void Connection_OnApplicationDidTerminate(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.ApplicationDidTerminate> e)
         {
 
         }
 
-        private static void Connection_OnTitleParametersDidChange(object sender,
+        private void Connection_OnTitleParametersDidChange(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.TitleParametersDidChange> e)
         {
 
         }
 
-        private static void Connection_OnSendToPlugin(object sender,
+        private void Connection_OnSendToPlugin(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.SendToPlugin> e)
         {
 
         }
 
-        private static void Connection_OnPropertyInspectorDidAppear(object sender,
+        private void Connection_OnPropertyInspectorDidAppear(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidAppear> e)
         {
-
+            _settings.Devices = GHubReader.Instance.GetAllDevices();
+            SaveSettings();
         }
 
-        private static void Connection_OnPropertyInspectorDidDisappear(object sender,
+        private void Connection_OnPropertyInspectorDidDisappear(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.PropertyInspectorDidDisappear> e)
         {
 
         }
 
-        private static void Connection_OnDeviceDidConnect(object sender,
+        private void Connection_OnDeviceDidConnect(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidConnect> e)
         {
 
         }
 
-        private static void Connection_OnDeviceDidDisconnect(object sender,
+        private void Connection_OnDeviceDidDisconnect(object sender,
             BarRaider.SdTools.Wrappers.SDEventReceivedEventArgs<BarRaider.SdTools.Events.DeviceDidDisconnect> e)
         {
 
         }
+        #endregion
 
         public override void Dispose()
         {
+            #region Event Dispose
             Connection.OnApplicationDidLaunch -= Connection_OnApplicationDidLaunch;
             Connection.OnApplicationDidTerminate -= Connection_OnApplicationDidTerminate;
             Connection.OnTitleParametersDidChange -= Connection_OnTitleParametersDidChange;
@@ -112,6 +129,7 @@ namespace GHubBatteryStatusPlugin
             Connection.OnPropertyInspectorDidDisappear -= Connection_OnPropertyInspectorDidDisappear;
             Connection.OnDeviceDidConnect -= Connection_OnDeviceDidConnect;
             Connection.OnDeviceDidDisconnect -= Connection_OnDeviceDidDisconnect;
+            #endregion
 
             Logger.Instance.LogMessage(TracingLevel.INFO, "Destructor called");
         }
@@ -123,7 +141,18 @@ namespace GHubBatteryStatusPlugin
 
         public override void KeyReleased(KeyPayload payload) { }
 
-        public override void OnTick() { }
+        public override async void OnTick()
+        {
+            var stats = GHubReader.Instance.GetBatteryStats(_settings.Device);
+            if (stats != null)
+            {
+                // Need to init something here?
+                return;
+            }
+
+            var title = $"{(int)stats.Percentage}%";
+            await Connection.SetTitleAsync(title);
+        }
 
         public override void ReceivedSettings(ReceivedSettingsPayload payload)
         {
