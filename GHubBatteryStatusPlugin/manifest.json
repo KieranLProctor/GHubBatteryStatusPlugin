@@ -1,0 +1,38 @@
+{
+  "Actions": [
+    {
+      "Icon": "Images/icon",
+      "Name": "GHub Battery Status",
+      "States": [
+        {
+          "Image": "Images/pluginAction",
+          "TitleAlignment": "middle",
+          "FontSize": "12"
+        }
+      ],
+      "SupportedInMultiActions": false,
+      "Tooltip": "TODO_ENTER_TOOLTIP",
+      "UUID": "GHubBatteryStatusPlugin.pluginaction",
+      "PropertyInspectorPath": "PropertyInspector/PluginActionPI.html"
+    }
+  ],
+  "Author": "Kieran Proctor",
+  "Name": "GHubBatteryStatusPlugin",
+  "Description": "Display the battery status of your Logitech devices.",
+  "Icon": "Images/pluginIcon",
+  "URL": "https://geren.uk",
+  "Version": "1.0",
+  "CodePath": "GHubBatteryStatusPlugin",
+  "Category": "Custom",
+  "CategoryIcon": "Images/categoryIcon",
+  "OS": [
+    {
+      "Platform": "windows",
+      "MinimumVersion": "10"
+    }
+  ],
+  "SDKVersion": 2,
+  "Software": {
+    "MinimumVersion": "4.9"
+  }
+}
