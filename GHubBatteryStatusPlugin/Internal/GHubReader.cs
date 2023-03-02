@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SQLite;
 using System.IO;
 using System.Linq;
 using System.Timers;
 using BarRaider.SdTools;
 using Newtonsoft.Json.Linq;
-using Microsoft.Data.Sqlite;
 
 namespace GHubBatteryStatusPlugin.Internal
 {
     internal class GHubReader
     {
-        private readonly string _settingsFile = @"LGHUB\settings.db";
-        private readonly string _batterySection = "percentage";
-        private readonly string _batteryWarningSection = "warning";
+        private const string SettingsFile = @"LGHUB\settings.db";
+        private readonly string BatterySection = "percentage";
+        private readonly string BatteryWarningSection = "warning";
 
         private static GHubReader instance = null;
         private static readonly object ObjLock = new object();
@@ -41,7 +41,7 @@ namespace GHubBatteryStatusPlugin.Internal
         private GHubReader()
         {
             _fullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                _settingsFile);
+                SettingsFile);
 
             _timerRefreshStatus = new Timer
             {
@@ -60,7 +60,7 @@ namespace GHubBatteryStatusPlugin.Internal
                 RefreshStats();
             }
 
-            return _batteryStats.Keys.Select(s => new DeviceInfo() { Name = s }).ToList();
+            return _batteryStats.Keys.Select(name => new DeviceInfo() { Name = name }).ToList();
         }
 
         public GHubBatteryStats GetBatteryStats(string deviceName)
@@ -93,7 +93,7 @@ namespace GHubBatteryStatusPlugin.Internal
                 var settings = ReadSettingsDb(_fullPath);
                 if (settings != null)
                 {
-                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} RefreshStats Error: Could not read GHub settings");
+                    Logger.Instance.LogMessage(TracingLevel.ERROR, $"{GetType()} RefreshStats Error: Could not read GHub settings");
                     return;
                 }
 
@@ -106,12 +106,12 @@ namespace GHubBatteryStatusPlugin.Internal
                         continue;
                     }
 
-                    if (splitName[2] != _batterySection && splitName[2] != _batteryWarningSection)
+                    if (splitName[2] != BatterySection && splitName[2] != BatteryWarningSection)
                     {
                         continue;
                     }
 
-                    if (_batteryStats.ContainsKey(splitName[1]) && splitName[2] == _batteryWarningSection)
+                    if (_batteryStats.ContainsKey(splitName[1]) && splitName[2] == BatteryWarningSection)
                     {
                         continue;
                     }
@@ -131,12 +131,12 @@ namespace GHubBatteryStatusPlugin.Internal
         {
             try
             {
-                using (var con = new SqliteConnection(fileName))
+                using (var con = new SQLiteConnection($"Data Source={fileName}"))
                 {
                     con.Open();
 
                     const string query = "SELECT FILE FROM DATA ORDER BY _id DESC";
-                    using (var cmd = new SqliteCommand(query, con))
+                    using (var cmd = new SQLiteCommand(query, con))
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
@@ -144,11 +144,13 @@ namespace GHubBatteryStatusPlugin.Internal
                             return JObject.Parse(reader.GetString(0));
                         }
                     }
+
+                    Logger.Instance.LogMessage(TracingLevel.INFO, "Made it to this section with");
                 }
             }
             catch (Exception ex)
             {
-                Logger.Instance.LogMessage(TracingLevel.ERROR, $"{this.GetType()} ReadSettingsDB Exception: {ex}");
+                Logger.Instance.LogMessage(TracingLevel.ERROR, $"{GetType()} ReadSettingsDb Exception: {ex}");
             }
 
             return null;

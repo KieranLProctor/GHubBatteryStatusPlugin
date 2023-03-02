@@ -7,9 +7,6 @@ namespace GHubBatteryStatusPlugin.Internal
         [JsonProperty(PropertyName = "isCharging")]
         public bool IsCharging { get; set; }
 
-        [JsonProperty(PropertyName = "isConnected")]
-        public bool IsConnected { get; set; }
-
         [JsonProperty(PropertyName = "millivolts")]
         public int Millivolts { get; set; }
 
